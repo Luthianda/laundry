@@ -61,7 +61,7 @@
           </div> -->
 
   <img src="assets/assets/img/favicon/washing-machine.ico" alt="" style="width: 50px">
-  <h5></h5>
+  <span class="app-brand-text demo menu-text fw-bold ms-2">Londri</span>
   <div class="menu-divider mt-0"></div>
 
   <div class="menu-inner-shadow"></div>
@@ -84,6 +84,7 @@
     </li>
 
     <!-- Layouts -->
+     <!-- <?php if ($_SESSION['ID_LEVEL'] == 1) { ?> -->
     <li class="menu-item active open">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-brain"></i>
@@ -113,18 +114,24 @@
         </li>
       </ul>
     </li>
+    <!-- <?php } ?> -->
 
     <!-- Apps & Pages -->
+     <!-- <?php if ($_SESSION['ID_LEVEL'] == 3 || $_SESSION['ID_LEVEL'] == 1) { ?> -->
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text">Transaction</span>
     </li>
+    <!-- <?php } ?> -->
+
+    <!-- <?php if ($_SESSION['ID_LEVEL'] == 1 || $_SESSION['ID_LEVEL'] == 2) { ?> -->
     <li class="menu-item">
-      <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-email.html"
+      <a href="?page=order"
         target="_blank" class="menu-link">
         <i class="menu-icon tf-icons bx bx-basket"></i>
         <div class="text-truncate" data-i18n="Email">Order</div>
       </a>
     </li>
+    <!-- <?php } ?> -->
 
   </ul>
 </aside>
