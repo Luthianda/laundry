@@ -1,26 +1,30 @@
 <?php
+ob_start();
+session_start();
 include "config/koneksi.php";
-// session_start();
-// ob_start();
 
-if (empty($_SESSION['NAME'])) {
-    header("location:index.php?access=denied");
-  }
+$_name = isset($_SESSION['NAME']) ? $_SESSION['NAME'] : '';
+if (!$_name) {
+  header("location:index.php?access=denied");
+}
 
-  function tanggal($d){
-    $waktu = strtotime($d);
-    return date('d F Y', $waktu);
-  }
+function tanggal($d)
+{
+  $waktu = strtotime($d);
+  return date('d F Y', $waktu);
+}
 
-  function rupiah($angka){
-    $hasil_rupiah = "Rp " . number_format($angka, 2, ',', '.');
-    return $hasil_rupiah;
-  }
+function rupiah($angka)
+{
+  $hasil_rupiah = "Rp " . number_format($angka, 2, ',', '.');
+  return $hasil_rupiah;
+}
 
-  function formatKg($angka){
-    $hasil_kg = $angka . " Kg";
-    return $hasil_kg;
-  }
+function formatKg($angka)
+{
+  $hasil_kg = $angka . " Kg";
+  return $hasil_kg;
+}
 
 ?>
 

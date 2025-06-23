@@ -4,8 +4,7 @@ $rowCostumers = mysqli_fetch_all($queryCostumer, MYSQLI_ASSOC);
 
 if (isset($_GET['delete'])) {
     $id_customer = $_GET['delete'];
-    $now = date('Y-m-d H:i:s');
-    mysqli_query($conn, "UPDATE customer SET deleted_at = '$now' WHERE id = '$id_customer'");
+    mysqli_query($conn, "UPDATE customer SET deleted_at = NOW() WHERE id = '$id_customer'");
     // mysqli_query($conn, "DELETE FROM customer WHERE id = '$id_customer'");
     header("location:?page=customer&remove=success");
 }

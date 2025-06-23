@@ -4,8 +4,7 @@ $rowOrders = mysqli_fetch_all($queryOrder, MYSQLI_ASSOC);
 
 if (isset($_GET['delete'])) {
     $id_order = $_GET['delete'];
-    $now = date('Y-m-d H:i:s');
-    mysqli_query($config, "UPDATE trans_orders SET deleted_at = '$now' WHERE id = '$id_order'");
+    mysqli_query($config, "UPDATE trans_orders SET deleted_at = NOW() WHERE id = '$id_order'");
     // mysqli_query($conn, "DELETE FROM order WHERE id = '$id_order'");
     header("location:?page=order&remove=success");
 }
@@ -26,6 +25,7 @@ if (isset($_GET['delete'])) {
                                 <th>Code</th>
                                 <th>Name</th>
                                 <th>Order</th>
+                                <th>End Order</th>
                                 <th>Status</th>
                                 <th></th>
                             </tr>
@@ -38,10 +38,11 @@ if (isset($_GET['delete'])) {
                                     </td>
                                     <td><?php echo $rowOrder['customer_name']; ?></td>
                                     <td><?php echo $rowOrder['order_date']; ?></td>
+                                    <td><?php echo $rowOrder['order_end_date']; ?></td>
                                     <td><?php echo $rowOrder['order_status'] == 0 ? 'Process' : 'Picked'; ?></td>
                                     <td>
-                                        <a href="?page=add-order&edit=<?php echo $rowOrder['id']; ?>"
-                                            class="btn btn-success">Edit</a>
+                                        <a href="?page=add-order&detail=<?php echo $rowOrder['id']; ?>&print="
+                                            class="btn btn-success">Print</a>
                                         <a onclick="return alert('Are you sure?')"
                                             href="?page=order&delete=<?php echo $rowOrder['id']; ?>"
                                             class="btn btn-danger">Delete</a>

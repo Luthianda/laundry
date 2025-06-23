@@ -1,14 +1,12 @@
 <?php
-    $queryService = mysqli_query($config, "SELECT * FROM type_of_services WHERE deleted_at is NULL ORDER BY id DESC");
-    $rowServices = mysqli_fetch_all($queryService, MYSQLI_ASSOC);
+$queryService = mysqli_query($config, "SELECT * FROM type_of_services WHERE deleted_at is NULL ORDER BY id DESC");
+$rowServices = mysqli_fetch_all($queryService, MYSQLI_ASSOC);
 
-    if (isset($_GET['delete'])) {
-        $id_services = $_GET['delete'];
-        $now = date('Y-m-d H:i:s');
-        mysqli_query($conn, "UPDATE type_of_service SET deleted_at = '$now' WHERE id = '$id_services'");
-        // mysqli_query($conn, "DELETE FROM type_of_service WHERE id = '$id_services'");
-        header("location:?page=services&remove=success");
-    }
+if (isset($_GET['delete'])) {
+    $id_services = $_GET['delete'];
+    mysqli_query($config, "UPDATE type_of_service SET deleted_at = NOW() WHERE id = '$id_services'");
+    header("location:?page=services&remove=success");
+}
 ?>
 
 <div class="row">
@@ -38,13 +36,16 @@
                                     <td><?php echo $rowService['price']; ?></td>
                                     <td><?php echo $rowService['description']; ?></td>
                                     <td>
-                                        <a href="?page=add-services&edit=<?php echo $rowService['id']; ?>" class="btn btn-success">Edit</a>
-                                        <a onclick="return alert('Are you sure?')" href="?page=services&delete=<?php echo $rowService['id']; ?>" class="btn btn-danger">Delete</a>
+                                        <a href="?page=add-services&edit=<?php echo $rowService['id']; ?>"
+                                            class="btn btn-success">Edit</a>
+                                        <a onclick="return alert('Are you sure?')"
+                                            href="?page=services&delete=<?php echo $rowService['id']; ?>"
+                                            class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
                             <?php } ?>
                         </tbody>
-                  </table>
+                    </table>
                 </div>
             </div>
         </div>
