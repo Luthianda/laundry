@@ -1,4 +1,12 @@
 <?php
+$queryO = mysqli_query($config, "SELECT * FROM trans_orders ORDER BY id DESC");
+if (mysqli_num_rows($queryO) == 0) {
+    $code_form = "DR" . "1";
+} else {
+    $rowO = mysqli_fetch_assoc($queryO);
+    $code_form = "DR" . $rowO['id'] + 1;
+}
+
 $queryC = mysqli_query($config, "SELECT * FROM customers WHERE deleted_at is NULL ORDER BY id DESC");
 $rowsC = mysqli_fetch_all($queryC, MYSQLI_ASSOC);
 
@@ -7,7 +15,7 @@ $rowsS = mysqli_fetch_all($queryS, MYSQLI_ASSOC);
 
 if (isset($_GET['detail'])) {
     $id_order = $_GET['detail'];
-    $queryOrder = mysqli_query($config, "SELECT o.*, c.customer_names FROM trans_orders AS o LEFT JOIN customers AS c ON o.id_customer = c.id WHERE o.id = '$id_order'");
+    $queryOrder = mysqli_query($config, "SELECT o.*, c.customer_name FROM trans_orders AS o LEFT JOIN customers AS c ON o.id_customer = c.id WHERE o.id = '$id_order'");
     $rowOrder = mysqli_fetch_assoc($queryOrder);
 
     $queryD = mysqli_query($config, "SELECT od.*, s.* FROM trans_order_details AS od LEFT JOIN type_of_services AS s ON od.id_service = s.id WHERE id_order = '$id_order' ORDER BY od.id DESC");
@@ -15,6 +23,9 @@ if (isset($_GET['detail'])) {
 }
 
 if (isset($_POST["save"])) {
+    if (empty($_POST['id_service'])) {
+        header('location:?page=add-order&transaction=failed');
+    }
     $id_customer = $_POST['id_customer'];
     $order_code = $_POST['order_code'];
     $order_date = $_POST['order_date'];
@@ -24,14 +35,18 @@ if (isset($_POST["save"])) {
     $insert = mysqli_query($config, "INSERT INTO trans_orders (id_customer, order_code, order_date, order_end_date, order_status) VALUES ('$id_customer', '$order_code', '$order_date', '$order_end_date', '$order_status')");
     if ($insert) {
         $id_order = mysqli_insert_id($config);
+        $hitungTotal = 0;
         for ($i = 0; $i < count($_POST['id_service']); $i++) {
             $id_service = $_POST['id_service'][$i];
             $qty = $_POST['qty'][$i] * 1000;
             $queryService = mysqli_query($config, "SELECT * FROM type_of_services WHERE id = '$id_service'");
             $rowsService = mysqli_fetch_assoc($queryService);
+            $notes = $_POST['notes'][$i];
             $subtotal = $_POST['qty'][$i] * $rowsService['price'];
+            $hitungTotal += $subtotal;
             mysqli_query($config, "INSERT INTO trans_order_details (id_order, id_service, qty, subtotal) VALUES ('$id_order', '$id_service', '$qty', '$subtotal')");
         }
+        $updateTotal = mysqli_query($config, "UPDATE trans_order SET total='$hitungTotal' WHERE id='$id_order'");
         header("location:?page=order&addition=success");
     }
 
@@ -41,7 +56,6 @@ if (isset($_POST['save2'])) {
     $id_order = $_GET['detail'];
     $id_customer = $rowOrder['id_customer'];
     $order_pay = $_POST['order_pay'];
-    $total = $_POST['total'];
     $order_change = $order_pay - $total;
     $now = date('Y-m-d H:i:s');
     $pickup_date = $now;
@@ -49,48 +63,8 @@ if (isset($_POST['save2'])) {
 
     $update = mysqli_query($config, "UPDATE trans_orders SET order_status='$order_status', order_pay='$order_pay', order_change='$order_change', total='$total' WHERE id='$id_order'");
     if ($update) {
-        mysqli_query($config, "INSERT INTO trans_laundry_pickup (id_order, id_customer, pickup_date) VALUES ('$id_order', '$id_customer', '$pickup_date')");
+        mysqli_query($config, "INSERT INTO trans_laundry_pickups (id_order, id_customer, pickup_date) VALUES ('$id_order', '$id_customer', '$pickup_date')");
         header("location:?page=add-order&detail=" . $id_order . "&status=pickup");
-    }
-}
-
-if (isset($_GET['edit'])) {
-    $id_order = $_GET['edit'];
-    $title = "Edit";
-    $query = mysqli_query($config, "SELECT * FROM trans_orders WHERE id = '$id_order'");
-    $row = mysqli_fetch_assoc($query);
-    $code_form = $row['order_code'];
-    $customer_form = $row['id_customer'];
-    $date_form = $row['order_date'];
-
-    if (isset($_POST['customer_name'])) {
-        $id_level = $_POST['id_level'];
-        $name = $_POST['customer_name'];
-        $phone = $_POST['phone'];
-        $address = $_POST['address'];
-        mysqli_query($config, "UPDATE customers SET customer_name = '$name', phone = '$phone', address = '$address' WHERE id = '$id_customer'");
-        header("location:?page=customer&change=success");
-    }
-} else {
-    $title = "Add";
-    $customer_form = "";
-    $date_form = "";
-
-    $queryO = mysqli_query($config, "SELECT * FROM trans_orders ORDER BY id DESC");
-    if (mysqli_num_rows($queryO) == 0) {
-        $code_form = "TR" . "1";
-    } else {
-        $rowO = mysqli_fetch_assoc($queryO);
-        $code_form = "TR" . $rowO['id'] + 1;
-    }
-
-    if (isset($_POST['customer_name'])) {
-        $id_level = $_POST['id_level'];
-        $name = $_POST['customer_name'];
-        $phone = $_POST['phone'];
-        $address = $_POST['address'];
-        mysqli_query($config, "INSERT INTO customers (customer_name, phone, address) VALUES ('$name', '$phone', '$address')");
-        header("location:?page=customer&add=success");
     }
 }
 ?>
@@ -145,12 +119,36 @@ if (isset($_GET['edit'])) {
                                 <?php foreach ($rowD as $key => $data) { ?>
                                     <tr>
                                         <td><?php echo $key + 1; ?></td>
-                                        <td><?php echo $data['service_name']; ?></td>
+                                        <td>
+                                            <?php if (empty($data['notes'])) { ?>
+                                                <?php echo $data['service_name']; ?>
+                                            </td>
+                                        <?php } else { ?>
+                                            <?php echo $data['service_name']; ?> <i class="ri ri-bookmark-fill cursor-pointer"
+                                                data-bs-toggle="modal" data-bs-target="#note<?php echo $key + 1; ?>"></i>
+                                            <!-- Modal Note -->
+                                            <div class="modal fade" id="note<?php echo $key + 1; ?>" tabindex="-1"
+                                                aria-labelledby="note<?php echo $key + 1; ?>Label" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="note<?php echo $key + 1; ?>Label">Note
+                                                            </h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <textarea readonly
+                                                                class="form-control"><?php echo $data['notes']; ?></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        </td>
                                         <td><?php echo formatKg($data['qty'] / 1000); ?></td>
                                         <td><?php echo rupiah($data['price']); ?></td>
-                                        <td><?php echo rupiah($data['qty'] / 1000 * $data['price']);
-                                        $total += $data['qty'] / 1000 * $data['price']; ?>
-                                        </td>
+                                        <td><?php echo rupiah($data['subtotal']); ?></td>
 
                                     </tr>
                                 <?php } ?>
@@ -173,12 +171,12 @@ if (isset($_GET['edit'])) {
                             </tbody>
                         </table>
                     </div>
-                    <?php if (isset($_GET['detail']) && !isset($_GET['print'])) { ?>
+                    <?php if (isset($_GET['detail'])) { ?>
                         <?php if ($rowOrder['order_status'] == 0) { ?>
                             <div class="mb-3" align="center">
                                 <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                    Buy
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pay">
+                                    Pay
                                 </button>
                             </div>
                         <?php } ?>
@@ -204,12 +202,6 @@ if (isset($_GET['edit'])) {
                                         value="<?php echo date('Y-m-d'); ?>">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="date_end" class="form-label">Date End <span
-                                            class="text-danger">*</span></label>
-                                    <input type="date" min="<?php echo date('Y-m-d'); ?>" name="order_end_date"
-                                        id="date_end" class="form-control" value="" required>
-                                </div>
-                                <div class="mb-3">
                                     <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
                                     <select name="order_status" id="status" class="form-control">
                                         <option selected value="0">Process</option>
@@ -228,10 +220,11 @@ if (isset($_GET['edit'])) {
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="notes" class="form-label">Notes</label>
-                                    <textarea name="notes" id="notes" cols="30" rows="9" class="form-control"></textarea>
+                                    <label for="date_end" class="form-label">Date End <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" min="<?php echo date('Y-m-d'); ?>" name="order_end_date"
+                                        id="date_end" class="form-control" value="" required>
                                 </div>
-
                             </div>
 
                             <div class="mb-3" align="right">
@@ -242,7 +235,8 @@ if (isset($_GET['edit'])) {
                                     <thead>
                                         <tr>
                                             <th>Type of Service</th>
-                                            <th>Qty</th>
+                                            <th>Qty (Kg)</th>
+                                            <th>Notes</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -261,11 +255,11 @@ if (isset($_GET['edit'])) {
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="pay" tabindex="-1" aria-labelledby="payLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Pay Order Item</h1>
+                <h1 class="modal-title fs-5" id="PayLabel">Pay Order Item</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="" method="post">
@@ -273,11 +267,10 @@ if (isset($_GET['edit'])) {
                     <div class="mb-3">
                         <label for="total" class="form-label">Total</label>
                         <input readonly type="text" id="total" class="form-control"
-                            value="<?php echo rupiah($total); ?>">
-                        <input type="hidden" name="total" value="<?php echo $total; ?>">
+                            value="<?php echo rupiah($rowOrder['total']); ?>">
                     </div>
                     <div class="mb-3">
-                        <label for="pay" class="form-label">Pay</label>
+                        <label for="pay" class="form-label">Pay (Rp)</label>
                         <input type="number" step="any" min="<?php echo $total; ?>" name="order_pay" id="pay"
                             class="form-control" required>
                     </div>
@@ -306,7 +299,9 @@ if (isset($_GET['edit'])) {
                 <?php } ?>
             </select>
         </td>
-        <td><input type="number" step="any" class="form-control" name="qty[]" placeholder="Enter your quantity"></td>
+        <td><input type="number" step="any" class="form-control" name="qty[]" placeholder="Enter your quantity" required></td>
+        <td><textarea class="form-control" name="notes[]"></textarea></td>
+        
         <td><button type="button" class="btn btn-danger delRow">Delete</button></td>
         `;
         tbody.appendChild(tr);

@@ -1,5 +1,5 @@
 <?php
-$queryOrder = mysqli_query($config, "SELECT o.* customers.customer_name FROM trans_orders AS o LEFT JOIN costumers AS c ON o.id_customer = c.id WHERE o.deleted_at is NULL ORDER BY o.id DESC");
+$queryOrder = mysqli_query($config, "SELECT o.*, c.customer_name FROM trans_orders AS o LEFT JOIN customers AS c ON o.id_customer = c.id WHERE o.deleted_at is NULL ORDER BY o.id DESC");
 $rowOrders = mysqli_fetch_all($queryOrder, MYSQLI_ASSOC);
 
 if (isset($_GET['delete'])) {
@@ -41,7 +41,7 @@ if (isset($_GET['delete'])) {
                                     <td><?php echo $rowOrder['order_end_date']; ?></td>
                                     <td><?php echo $rowOrder['order_status'] == 0 ? 'Process' : 'Picked'; ?></td>
                                     <td>
-                                        <a href="?page=add-order&detail=<?php echo $rowOrder['id']; ?>&print="
+                                        <a href="print.php?id_order=<?php echo $rowOrder['id']; ?>"
                                             class="btn btn-success">Print</a>
                                         <a onclick="return alert('Are you sure?')"
                                             href="?page=order&delete=<?php echo $rowOrder['id']; ?>"
@@ -55,7 +55,4 @@ if (isset($_GET['delete'])) {
             </div>
         </div>
     </div>
-</div>")
-
-
-?>
+</div>

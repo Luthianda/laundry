@@ -16,7 +16,7 @@ if (isset($_GET['delete'])) {
                 <h5 class="card-title">Data Type of Service</h5>
                 <div class="table-responsive">
                     <div class="mb-3" align="right">
-                        <a href="?page=add-services" class="btn btn-primary">Add</a>
+                        <a href="?page=add-service" class="btn btn-primary">Add</a>
                     </div>
                     <table class="table table-bordered mb-0">
                         <thead>

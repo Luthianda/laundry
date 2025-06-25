@@ -42,6 +42,9 @@ if (isset($_GET['edit'])) {
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title"><?php echo isset($_GET['edit']) ? 'Edit' : 'Add' ?> User</h5>
+                <div class="mb-3" align="right">
+                    <a href="?page=user" class="btn btn-secondary">Back</a>
+                </div>
                 <form action="" method="post">
                     <div class="mb-3">
                         <label for="level" class="form-label">Level <span class="text-danger">*</span></label>
@@ -69,7 +72,7 @@ if (isset($_GET['edit'])) {
                             placeholder="Enter your password" <?php echo $required; ?>>
                     </div>
                     <div class="mb-3">
-                        <button type="submit" class="btn btn-primary" name="save" value="save">Save</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </form>
             </div>
