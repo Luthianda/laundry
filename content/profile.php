@@ -28,15 +28,10 @@ $rowOrder = mysqli_fetch_all($queryOrder, MYSQLI_ASSOC);
                             <div class="mb-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="layout-demo-wrapper">
-                                            <div class="layout-demo-placeholder">
-                                                <img src="https://thumb.ac-illust.com/e0/e090e8e71575101e592ceb8585180bfc_t.jpeg"
-                                                    class="img-fluid" alt="Stinky Clothes" />
-                                            </div>
-                                            <div class="layout-demo-info">
-                                                <h4>Stinky clothes makes you nuasea?</h4>
-                                                <p>Don't be lazy and wash it at Londri!</p>
-                                            </div>
+                                        <h5 class="card-title" align="center">Profile Picture</h5>
+                                        <div class="mb-3">
+                                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpZh58zouK5AkI5aqcntMHqq883EUHHZmqKg&s"
+                                                alt="cute cat" width="80%" />
                                         </div>
                                     </div>
                                 </div>
@@ -64,7 +59,6 @@ $rowOrder = mysqli_fetch_all($queryOrder, MYSQLI_ASSOC);
                                         <td><?php echo date('d F Y'); ?></td>
                                     </tr>
                                 </table>
-                                <br><br><br><br><br>
                                 <div class="row mb-3">
                                     <div class="col-sm-4">
                                         <div class="card">

@@ -154,7 +154,7 @@ $jam = explode(" ", $tanggal)[1];
         </div>
         <div class="line"></div>
         <div class="footer" class="text-center">
-            Terima Kasih!!
+            Maaciw ea!
         </div>
         <script>
             window.print();

@@ -1,8 +1,18 @@
 <?php
+if (strtolower($rowLevel['level_name']) == 'leader' || strtolower($rowLevel['level_name']) == 'operator') {
+    header("location:home.php?access=denied");
+    exit;
+}
+
+
 if (isset($_GET['edit'])) {
     $id_services = $_GET['edit'];
     $title = "Edit";
     $query = mysqli_query($config, "SELECT * FROM type_of_services WHERE id = '$id_services'");
+    if (mysqli_num_rows($query) == 0) {
+        header("location:?page=service&data=notfound");
+        exit();
+    }
     $row = mysqli_fetch_assoc($query);
     $name_form = $row['service_name'];
     $price_form = $row['price'];
@@ -14,7 +24,7 @@ if (isset($_GET['edit'])) {
         $price = $_POST['price'];
         $description = $_POST['description'];
         mysqli_query($config, "UPDATE type_of_services SET service_name = '$name', price = '$price', description = '$description' WHERE id = '$id_services'");
-        header("location:?page=services&change=success");
+        header("location:?page=service&change=success");
     }
 } else {
     $title = "Add";

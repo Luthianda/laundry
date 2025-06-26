@@ -1,11 +1,17 @@
 <?php
+if (strtolower($rowLevel['level_name']) == 'leader') {
+    header("location:home.php?access=denied");
+    exit;
+}
+
+
 $queryService = mysqli_query($config, "SELECT * FROM type_of_services WHERE deleted_at is NULL ORDER BY id DESC");
 $rowServices = mysqli_fetch_all($queryService, MYSQLI_ASSOC);
 
 if (isset($_GET['delete'])) {
     $id_services = $_GET['delete'];
-    mysqli_query($config, "UPDATE type_of_service SET deleted_at = NOW() WHERE id = '$id_services'");
-    header("location:?page=services&remove=success");
+    mysqli_query($config, "UPDATE type_of_services SET deleted_at = NOW() WHERE id = '$id_services'");
+    header("location:?page=service&remove=success");
 }
 ?>
 
@@ -13,11 +19,13 @@ if (isset($_GET['delete'])) {
     <div class="col-sm-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Data Type of Service</h5>
+                <h5 class="card-title">Type of Service</h5>
                 <div class="table-responsive">
-                    <div class="mb-3" align="right">
-                        <a href="?page=add-service" class="btn btn-primary">Add</a>
-                    </div>
+                    <?php if (strtolower($rowLevel['level_name']) == 'administrator') { ?>
+                        <div class="mb-3" align="right">
+                            <a href="?page=add-service" class="btn btn-primary">Add</a>
+                        </div>
+                    <?php } ?>
                     <table class="table table-bordered mb-0">
                         <thead>
                             <tr>
@@ -25,7 +33,9 @@ if (isset($_GET['delete'])) {
                                 <th>Name</th>
                                 <th>Price</th>
                                 <th>Description</th>
-                                <th></th>
+                                <?php if (strtolower($rowLevel['level_name']) == 'administrator') { ?>
+                                    <th></th>
+                                <?php } ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -33,15 +43,17 @@ if (isset($_GET['delete'])) {
                                 <tr>
                                     <td><?php echo $index + 1; ?></td>
                                     <td><?php echo $rowService['service_name']; ?></td>
-                                    <td><?php echo $rowService['price']; ?></td>
+                                    <td><?php echo rupiah($rowService['price']); ?></td>
                                     <td><?php echo $rowService['description']; ?></td>
-                                    <td>
-                                        <a href="?page=add-services&edit=<?php echo $rowService['id']; ?>"
-                                            class="btn btn-success">Edit</a>
-                                        <a onclick="return alert('Are you sure?')"
-                                            href="?page=services&delete=<?php echo $rowService['id']; ?>"
-                                            class="btn btn-danger">Delete</a>
-                                    </td>
+                                    <?php if (strtolower($rowLevel['level_name']) == 'administrator') { ?>
+                                        <td>
+                                            <a href="?page=add-service&edit=<?php echo $rowService['id']; ?>"
+                                                class="btn btn-success">Edit</a>
+                                            <a onclick="return alert('Are you sure?')"
+                                                href="?page=service&delete=<?php echo $rowService['id']; ?>"
+                                                class="btn btn-danger">Delete</a>
+                                        </td>
+                                    <?php } ?>
                                 </tr>
                             <?php } ?>
                         </tbody>

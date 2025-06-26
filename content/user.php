@@ -1,12 +1,17 @@
 <?php
-    $queryUser = mysqli_query($config, "SELECT users.*, levels.level_name FROM users LEFT JOIN levels ON users.id_level = levels.id ORDER BY users.id DESC");
-    $rowUsers = mysqli_fetch_all($queryUser, MYSQLI_ASSOC);
+if (strtolower($rowLevel['level_name']) != 'administrator') {
+    header("location:home.php?access=denied");
+    exit;
+}
 
-    if (isset($_GET['delete'])) {
-        $id_user = $_GET['delete'];
-        mysqli_query($conn, "DELETE FROM users WHERE id = '$id_user'");
-        header("location:?page=user&remove=success");
-    }
+$queryUser = mysqli_query($config, "SELECT users.*, levels.level_name FROM users LEFT JOIN levels ON users.id_level = levels.id ORDER BY users.id DESC");
+$rowUsers = mysqli_fetch_all($queryUser, MYSQLI_ASSOC);
+
+if (isset($_GET['delete'])) {
+    $id_user = $_GET['delete'];
+    mysqli_query($config, "DELETE FROM users WHERE id = '$id_user'");
+    header("location:?page=user&remove=success");
+}
 ?>
 
 <div class="row">
@@ -36,13 +41,16 @@
                                     <td><?php echo $rowUser['email']; ?></td>
                                     <td><?php echo $rowUser['level_name']; ?></td>
                                     <td>
-                                        <a href="?page=add-user&edit=<?php echo $rowUser['id']; ?>" class="btn btn-success">Edit</a>
-                                        <a onclick="return alert('Are you sure?')" href="?page=user&delete=<?php echo $rowUser['id']; ?>" class="btn btn-danger">Delete</a>
+                                        <a href="?page=add-user&edit=<?php echo $rowUser['id']; ?>"
+                                            class="btn btn-success">Edit</a>
+                                        <a onclick="return alert('Are you sure?')"
+                                            href="?page=user&delete=<?php echo $rowUser['id']; ?>"
+                                            class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
                             <?php } ?>
                         </tbody>
-                  </table>
+                    </table>
                 </div>
             </div>
         </div>

@@ -3,8 +3,7 @@ include "config/koneksi.php";
 ob_start();
 session_start();
 
-$_name = isset($_SESSION['NAME']) ? $_SESSION['NAME'] : '';
-if (!$_name) {
+if (!($_SESSION['NAME'])) {
     header("location:index.php?access=denied");
 }
 
@@ -42,7 +41,7 @@ function formatKg($angka)
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="assets/assets/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="assets/assets/img/favicon/washing-machine.ico" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -123,11 +122,6 @@ function formatKg($angka)
     </div>
     <!-- / Layout wrapper -->
 
-    <div class="buy-now">
-        <a href="https://themeselection.com/item/sneat-dashboard-pro-bootstrap/" target="_blank"
-            class="btn btn-danger btn-buy-now">Upgrade to Pro</a>
-    </div>
-
     <!-- Core JS -->
 
     <script src="assets/assets/vendor/libs/jquery/jquery.js"></script>
@@ -150,7 +144,7 @@ function formatKg($angka)
     <!-- Page JS -->
 
     <!-- Place this tag before closing body tag for github widget button. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script async="async" defer="defer" src="https://buttons.github.io/buttons.js"></script>
 </body>
 
 </html>

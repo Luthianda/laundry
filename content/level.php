@@ -1,10 +1,15 @@
 <?php
+if (strtolower($rowLevel['level_name']) != 'administrator') {
+    header("location:home.php?access=denied");
+    exit;
+}
+
 $queryLevel = mysqli_query($config, "SELECT * FROM levels ORDER BY id DESC");
 $rowLevels = mysqli_fetch_all($queryLevel, MYSQLI_ASSOC);
 
 if (isset($_GET['delete'])) {
     $id_level = $_GET['delete'];
-    mysqli_query($config, "DELETE FROM level WHERE id = '$id_level'");
+    mysqli_query($config, "DELETE FROM levels WHERE id = '$id_level'");
     header("location:?page=level&remove=success");
 }
 ?>

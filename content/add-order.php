@@ -1,10 +1,16 @@
 <?php
+if (strtolower($rowLevel['level_name']) == 'leader') {
+    header("location:home.php?access=denied");
+    exit;
+}
+
+
 $queryO = mysqli_query($config, "SELECT * FROM trans_orders ORDER BY id DESC");
 if (mysqli_num_rows($queryO) == 0) {
-    $code_form = "DR" . "1";
+    $code_form = "TRS" . "1";
 } else {
     $rowO = mysqli_fetch_assoc($queryO);
-    $code_form = "DR" . $rowO['id'] + 1;
+    $code_form = "TRS" . $rowO['id'] + 1;
 }
 
 $queryC = mysqli_query($config, "SELECT * FROM customers WHERE deleted_at is NULL ORDER BY id DESC");
@@ -16,6 +22,10 @@ $rowsS = mysqli_fetch_all($queryS, MYSQLI_ASSOC);
 if (isset($_GET['detail'])) {
     $id_order = $_GET['detail'];
     $queryOrder = mysqli_query($config, "SELECT o.*, c.customer_name FROM trans_orders AS o LEFT JOIN customers AS c ON o.id_customer = c.id WHERE o.id = '$id_order'");
+    if (mysqli_num_rows($queryOrder) == 0) {
+        header("location:?page=order&data=notfound");
+        exit();
+    }
     $rowOrder = mysqli_fetch_assoc($queryOrder);
 
     $queryD = mysqli_query($config, "SELECT od.*, s.* FROM trans_order_details AS od LEFT JOIN type_of_services AS s ON od.id_service = s.id WHERE id_order = '$id_order' ORDER BY od.id DESC");
@@ -46,7 +56,7 @@ if (isset($_POST["save"])) {
             $hitungTotal += $subtotal;
             mysqli_query($config, "INSERT INTO trans_order_details (id_order, id_service, qty, subtotal) VALUES ('$id_order', '$id_service', '$qty', '$subtotal')");
         }
-        $updateTotal = mysqli_query($config, "UPDATE trans_order SET total='$hitungTotal' WHERE id='$id_order'");
+        $updateTotal = mysqli_query($config, "UPDATE trans_orders SET total='$hitungTotal' WHERE id='$id_order'");
         header("location:?page=order&addition=success");
     }
 
@@ -56,12 +66,13 @@ if (isset($_POST['save2'])) {
     $id_order = $_GET['detail'];
     $id_customer = $rowOrder['id_customer'];
     $order_pay = $_POST['order_pay'];
-    $order_change = $order_pay - $total;
+    $order_change = $order_pay - $rowOrder['total'];
+    ;
     $now = date('Y-m-d H:i:s');
     $pickup_date = $now;
     $order_status = 1;
 
-    $update = mysqli_query($config, "UPDATE trans_orders SET order_status='$order_status', order_pay='$order_pay', order_change='$order_change', total='$total' WHERE id='$id_order'");
+    $update = mysqli_query($config, "UPDATE trans_orders SET order_status='$order_status', order_pay='$order_pay', order_change='$order_change' WHERE id='$id_order'");
     if ($update) {
         mysqli_query($config, "INSERT INTO trans_laundry_pickups (id_order, id_customer, pickup_date) VALUES ('$id_order', '$id_customer', '$pickup_date')");
         header("location:?page=add-order&detail=" . $id_order . "&status=pickup");
@@ -154,7 +165,7 @@ if (isset($_POST['save2'])) {
                                 <?php } ?>
                                 <tr>
                                     <td colspan="4">Total</td>
-                                    <td><?php echo rupiah($total); ?></td>
+                                    <td><?php echo rupiah($rowOrder['total']); ?></td>
                                 </tr>
                                 <?php if (isset($_GET['detail'])) { ?>
                                     <?php if ($rowOrder['order_status'] == 1) { ?>

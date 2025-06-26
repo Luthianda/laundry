@@ -1,4 +1,9 @@
 <?php
+if (strtolower($rowLevel['level_name']) == 'leader') {
+    header("location:home.php?access=denied");
+    exit;
+}
+
 $queryOrder = mysqli_query($config, "SELECT o.*, c.customer_name FROM trans_orders AS o LEFT JOIN customers AS c ON o.id_customer = c.id WHERE o.deleted_at is NULL ORDER BY o.id DESC");
 $rowOrders = mysqli_fetch_all($queryOrder, MYSQLI_ASSOC);
 
@@ -37,9 +42,9 @@ if (isset($_GET['delete'])) {
                                             href="?page=add-order&detail=<?php echo $rowOrder['id']; ?>"><?php echo $rowOrder['order_code']; ?></a>
                                     </td>
                                     <td><?php echo $rowOrder['customer_name']; ?></td>
-                                    <td><?php echo $rowOrder['order_date']; ?></td>
-                                    <td><?php echo $rowOrder['order_end_date']; ?></td>
-                                    <td><?php echo $rowOrder['order_status'] == 0 ? 'Process' : 'Picked'; ?></td>
+                                    <td><?php echo tanggal($rowOrder['order_date']); ?></td>
+                                    <td><?php echo tanggal($rowOrder['order_end_date']); ?></td>
+                                    <td><?php echo $rowOrder['order_status'] == 0 ? 'Process' : 'Picked Up'; ?></td>
                                     <td>
                                         <a href="print.php?id_order=<?php echo $rowOrder['id']; ?>"
                                             class="btn btn-success">Print</a>

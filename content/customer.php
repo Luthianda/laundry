@@ -1,10 +1,16 @@
 <?php
+if (strtolower($rowLevel['level_name']) == 'leader') {
+    header("location:home.php?access=denied");
+    exit;
+}
+
+
 $queryCostumer = mysqli_query($config, "SELECT * FROM customers WHERE deleted_at is NULL ORDER BY id DESC");
 $rowCostumers = mysqli_fetch_all($queryCostumer, MYSQLI_ASSOC);
 
 if (isset($_GET['delete'])) {
     $id_customer = $_GET['delete'];
-    mysqli_query($conn, "UPDATE customer SET deleted_at = NOW() WHERE id = '$id_customer'");
+    mysqli_query($config, "UPDATE customers SET deleted_at = NOW() WHERE id = '$id_customer'");
     // mysqli_query($conn, "DELETE FROM customer WHERE id = '$id_customer'");
     header("location:?page=customer&remove=success");
 }

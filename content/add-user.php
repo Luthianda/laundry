@@ -1,4 +1,10 @@
 <?php
+if (strtolower($rowLevel['level_name']) != 'administrator') {
+    header("location:home.php?access=denied");
+    exit;
+}
+
+
 $queryLevel = mysqli_query($config, "SELECT * FROM levels ORDER BY id DESC");
 $rowLevels = mysqli_fetch_all($queryLevel, MYSQLI_ASSOC);
 
@@ -6,6 +12,10 @@ if (isset($_GET['edit'])) {
     $id_user = $_GET['edit'];
     $title = "Edit";
     $queryUser = mysqli_query($config, "SELECT * FROM users WHERE id = '$id_user'");
+    if (mysqli_num_rows($queryUser) == 0) {
+        header("location:?page=user&data=notfound");
+        exit();
+    }
     $rowUser = mysqli_fetch_assoc($queryUser);
     $name_form = $rowUser['name'];
     $email_form = $rowUser['email'];
@@ -16,7 +26,7 @@ if (isset($_GET['edit'])) {
         $name = $_POST['name'];
         $email = $_POST['email'];
         $password = empty($_POST['password']) ? $row['password'] : sha1($_POST['password']);
-        mysqli_query($config, "UPDATE user SET id_level = '$id_level', name = '$name', email = '$email', password = '$password' WHERE id = '$id_user'");
+        mysqli_query($config, "UPDATE users SET id_level = '$id_level', name = '$name', email = '$email', password = '$password' WHERE id = '$id_user'");
         header("location:?page=user&change=success");
     }
 } else {

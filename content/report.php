@@ -1,4 +1,9 @@
 <?php
+if (strtolower($rowLevel['level_name']) == 'operator') {
+    header("location:home.php?access=denied");
+    exit;
+}
+
 $selectOrder = mysqli_query($config, "SELECT order_date FROM trans_orders ORDER BY order_date");
 $rowOrder = mysqli_fetch_all($selectOrder, MYSQLI_ASSOC);
 $len = mysqli_num_rows($selectOrder);
@@ -81,7 +86,7 @@ $rowReports = mysqli_fetch_all($queryReport, MYSQLI_ASSOC);
     </div>
 </div>
 
-<script>
+<!-- <script>
     $(function () {
         'use strict';
 
@@ -311,4 +316,4 @@ $rowReports = mysqli_fetch_all($queryReport, MYSQLI_ASSOC);
             $('div.head-label').html('<h5 class="card-title mb-0">DataTable with Buttons</h5>');
         }
     });
-</script>
+</script> -->
