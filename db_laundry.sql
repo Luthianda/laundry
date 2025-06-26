@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 26, 2025 at 06:31 AM
+-- Generation Time: Jun 26, 2025 at 10:00 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,7 +45,7 @@ INSERT INTO `customers` (`id`, `customer_name`, `phone`, `address`, `created_at`
 (1, 'Bang Diri', '08123456789', 'Jl. yang pernah ada', '2025-06-24 04:30:38', NULL, NULL),
 (2, 'Muklis', '08645645645', 'Jl. Prikitiw no 19', '2025-06-24 04:31:10', NULL, NULL),
 (3, 'Mutia', '0866669999', 'Jl. jalan mulu ngeluarin duid lagi', '2025-06-24 04:32:13', NULL, NULL),
-(4, 'Diera', '0855566677', 'Sepanjang Jl. Kenangan no. 74', '2025-06-26 03:22:51', NULL, NULL);
+(4, 'Diera', '0855566677', 'Sepanjang Jl. Kenangan no. 74', '2025-06-26 03:22:51', '2025-06-26 04:39:41', '2025-06-26 11:39:41');
 
 -- --------------------------------------------------------
 
@@ -68,7 +68,8 @@ CREATE TABLE `levels` (
 INSERT INTO `levels` (`id`, `level_name`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'Administrator', '2025-06-18 01:03:31', NULL, NULL),
 (2, 'Operator', '2025-06-19 01:43:13', NULL, NULL),
-(3, 'Pimpinan', '2025-06-19 01:45:24', NULL, NULL);
+(3, 'Pimpinan', '2025-06-19 01:45:24', NULL, NULL),
+(4, 'Operator', '2025-06-26 04:40:19', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -121,7 +122,7 @@ CREATE TABLE `trans_orders` (
 
 INSERT INTO `trans_orders` (`id`, `id_customer`, `order_code`, `order_date`, `order_end_date`, `order_status`, `created_at`, `updated_at`, `deleted_at`, `order_pay`, `order_change`, `total`) VALUES
 (7, 1, 'TRS1', '2025-06-26', '2025-06-30', 1, '2025-06-26 02:38:26', '2025-06-26 02:40:15', NULL, 50000, 19000, 31000),
-(8, 2, 'TRS8', '2025-06-26', '2025-06-28', 0, '2025-06-26 02:39:45', '2025-06-26 02:39:45', NULL, 0, 0, 29000),
+(8, 2, 'TRS8', '2025-06-26', '2025-06-28', 0, '2025-06-26 02:39:45', '2025-06-26 04:40:56', '2025-06-26 11:40:56', 0, 0, 29000),
 (9, 3, 'TRS9', '2025-06-26', '2025-06-29', 0, '2025-06-26 02:40:05', '2025-06-26 02:40:05', NULL, 0, 0, 30000),
 (10, 2, 'TRS10', '2025-06-26', '2025-07-02', 1, '2025-06-26 03:21:21', '2025-06-26 03:21:46', NULL, 30000, 9000, 21000);
 
@@ -175,10 +176,11 @@ CREATE TABLE `type_of_services` (
 --
 
 INSERT INTO `type_of_services` (`id`, `service_name`, `price`, `description`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Wash', 4500, 'Nyuci Baju', '2025-06-24 03:48:34', '2025-06-26 03:20:48', NULL),
+(1, 'Wash', 4500, 'Nyuci Baju', '2025-06-24 03:48:34', '2025-06-26 04:39:49', '2025-06-26 11:39:49'),
 (2, 'Ironing', 5000, 'Gosok baju, mahalan dikit karna lama', '2025-06-24 04:28:57', '2025-06-26 03:20:20', NULL),
 (3, 'Wash and Ironing', 7000, 'Nyuci ma gosok baju', '2025-06-24 04:29:25', '2025-06-26 03:20:38', NULL),
-(4, 'Bigger Laundry', 7000, 'buat bersihin selimut, karpet, mantel dan sprei my love bau kamu', '2025-06-26 03:20:00', NULL, NULL);
+(4, 'Bigger Laundry', 7000, 'buat bersihin selimut, karpet, mantel dan sprei my love bau kamu', '2025-06-26 03:20:00', NULL, NULL),
+(5, 'Wash', 45000, 'nyuci baju', '2025-06-26 04:40:09', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -265,7 +267,7 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `levels`
 --
 ALTER TABLE `levels`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `trans_laundry_pickups`
@@ -289,13 +291,13 @@ ALTER TABLE `trans_order_details`
 -- AUTO_INCREMENT for table `type_of_services`
 --
 ALTER TABLE `type_of_services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
